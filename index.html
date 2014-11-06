@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>d3 Bokeh</title>
+    <style type="text/css">
+        body {
+            background-color: #344695;
+            background: linear-gradient(135deg, #4177d3 0%,#344695 100%); /* W3C */
+        }
+        
+    </style>
+</head>
+
+<body>
+
+    <div id="svg"></div>
+    
+    
+    
+    <script src="d3.v3.min.js"></script>
+    <script type="text/javascript">
+        var width = 2000;
+        var height = 1200;
+        var large = 85;
+        var small = 35;
+        var n = 35;
+        
+        var svg = d3.select("#svg")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        
+        
+        //Randomly generated nodes
+        
+        var largeNodes = d3.range(n).map(function() {
+            return {
+                x: width * Math.random(),
+                y: height * Math.random(),
+                dx: Math.random() / 5,
+                dy: Math.random() / 5
+              };
+        })
+        
+        var smallNodes = d3.range(n).map(function() {
+            return {
+                x: width * Math.random(),
+                y: height * Math.random(),
+                dx: Math.random(),
+                dy: Math.random()
+              };
+        })
+        
+        var filter = svg.append("defs")
+            .append("filter")
+            .attr("id", "blur")
+            .append("feGaussianBlur")
+            .attr("stdDeviation", 5);
+        
+        var bigCircles = svg.selectAll("circle")
+            .data(largeNodes)
+            .enter()
+            .append("circle")
+            .attr("r", large)
+            .attr("fill", "#d3fff5")
+            .attr("fill-opacity", 0.3)
+            .attr("filter", "url(#blur)");
+            
+        var smallCircles = svg.selectAll("circle")
+            .data(smallNodes)
+            .enter()
+            .append("circle")
+            .attr("r", small)
+            .attr("fill", "#d3fff5")
+            .attr("fill-opacity", 0.8);
+        
+        d3.timer(function() {
+        
+        // Update the circle positions.
+        bigCircles
+            .attr("cx", function(d) { 
+                // Increase your tick
+                d.x += d.dx;
+                // Recycle your nodes
+                if (d.x > width + large) {
+                    d.x -= width + (large*2)
+                } else if (d.x < -large) { 
+                    d.x += width + (large*2)
+                }
+                return d.x; 
+            })
+            .attr("cy", function(d) {
+                // Increase your tick
+                d.y += d.dy;
+                // Recycle your nodes
+                if (d.y > height + large) { 
+                    d.y -= height + (large*2)
+                } else if (d.y < - large) {
+                    d.y += height + (large*2)
+                }
+                return d.y; 
+            });
+        smallCircles
+            .attr("cx", function(d) { 
+                // Increase your tick
+                d.x += d.dx;
+                // Recycle your nodes
+                if (d.x > width + large) {
+                    d.x -= width + (large*2)
+                } else if (d.x < -large) { 
+                    d.x += width + (large*2)
+                }
+                return d.x; 
+            })
+            .attr("cy", function(d) {
+                // Increase your tick
+                d.y += d.dy;
+                // Recycle your nodes
+                if (d.y > height + large) { 
+                    d.y -= height + (large*2)
+                } else if (d.y < - large) {
+                    d.y += height + (large*2)
+                }
+                return d.y; 
+             });
+        
+        });
+    </script>
+</body>
+</html>
