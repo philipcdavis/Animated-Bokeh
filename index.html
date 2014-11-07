@@ -5,8 +5,12 @@
     <title>d3 Bokeh</title>
     <style type="text/css">
         body {
-            background-color: #344695;
-            background: linear-gradient(135deg, #4177d3 0%,#344695 100%); /* W3C */
+            background-color: #131626;
+            background: linear-gradient(135deg, #ffda6b 0%,  #ffad6b 100%);
+        }
+        
+        .circles {
+            blend-mode: multiply;
         }
         
     </style>
@@ -24,7 +28,7 @@
         var height = 900;
         var large = 85;
         var small = 35;
-        var n = 25;
+        var n = 105;
         
         var svg = d3.select("#svg")
             .append("svg")
@@ -40,29 +44,37 @@
                 y: height * Math.random(),
                 dx: Math.random() / 2,
                 dy: Math.random() / 2,
-                r: (Math.random() * 35) + 40
+                r: (Math.random() * 45) + 40
               };
         })
         
         
         var fillScale = d3.scale.linear()
-            .domain([40, 75])
-            .range([0.9,0])
+            .domain([40, 85])
+            .range([0.95,0])
         
         var filter = svg.append("defs")
             .append("filter")
             .attr("id", "blur")
             .append("feGaussianBlur")
-            .attr("stdDeviation", 0);
+            .attr("stdDeviation", 4);
         
         var circles = svg.selectAll(".circles")
             .data(nodes)
             .enter()
             .append("circle")
             .attr("r", function(d) { return d.r})
-            .attr("fill", "#d3fff5")
-            .attr("fill-opacity", function(d){ return fillScale(d.r)})
-            .attr("filter", "url(#blur)");
+            .attr("fill", "#ffe38f")
+            .attr("fill-opacity", function(d){
+                return fillScale(d.r)
+            })
+            .attr("filter", function(d){
+                if(d.r > 45) {
+                   return "url(#blur)"
+                } else {
+                    return null;
+                }
+            });
             
         
         d3.timer(function() {
@@ -73,10 +85,10 @@
                 // Increase your tick
                 d.x += d.dx;
                 // Recycle your nodes
-                if (d.x > width + large) {
-                    d.x -= width + (large*2)
-                } else if (d.x < -large) { 
-                    d.x += width + (large*2)
+                if (d.x > width + d.r) {
+                    d.x -= width + (d.r*2)
+                } else if (d.x < -d.r) { 
+                    d.x += width + (d.r*2)
                 }
                 return d.x; 
             })
@@ -84,10 +96,10 @@
                 // Increase your tick
                 d.y += d.dy;
                 // Recycle your nodes
-                if (d.y > height + large) { 
-                    d.y -= height + (large*2)
-                } else if (d.y < - large) {
-                    d.y += height + (large*2)
+                if (d.y > height + d.r) { 
+                    d.y -= height + (d.r*2)
+                } else if (d.y < - d.r) {
+                    d.y += height + (d.r*2)
                 }
                 return d.y; 
             });
